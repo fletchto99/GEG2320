@@ -1,0 +1,355 @@
+\documentclass[fleqn, 12pt]{article}
+
+% packages %
+\usepackage[includeheadfoot,headheight=15pt,margin=0.5in,left=1in,right=1in,headsep=10pt]{geometry} % page margins %
+\usepackage{mathtools, amssymb} % math %
+\usepackage{tabularx, multirow} % tables %
+\usepackage[outputdir=.latexcache]{minted} % code %
+\usepackage{graphicx} % graphics %
+\usepackage{enumerate} % lists %
+\usepackage{adjustbox} % images %
+\usepackage[T1]{fontenc} % fonts %
+\usepackage[protrusion=true,expansion=true]{microtype} % font clarity %
+\usepackage{fancyhdr} % headers and footers %
+\usepackage{lastpage} % reference page numbers %
+\usepackage{color} % colors for code %
+\usepackage{tikz} % for graphs %
+\usepackage{soul} % for strikethroughout %
+\usepackage{upquote} % Fix single quotes %
+\usepackage{etoolbox} % Conditional checks %
+\usepackage[hidelinks]{hyperref} % Hyperlinks %
+\usepackage{indentfirst} % fix indentation - only for essays %
+\usepackage[figure,table]{totalcount} % For counting tables and figures %
+\usepackage[utf8]{inputenc} % Encode as UTF-8 %
+\usepackage{biblatex} % References %
+\addbibresource{references.bib} % bib source %
+
+% Document details %
+\newcommand{\university}{University of Ottawa}
+\newcommand{\name}{Matthew Langlois}
+\newcommand{\studentNumber}{7731813}
+\newcommand{\semester}{Winter 2018}
+\newcommand{\assignmentType}{Assignment}
+\newcommand{\assignmentNumber}{1}
+\newcommand{\dueDate}{Feb 5, 2018}
+\newcommand{\courseCode}{GEG2320}
+\newcommand{\courseTitle}{Introduction to Geomatics}
+\newcommand{\essayTitle}{<Title>} % only for essays %
+\newcommand{\essaySubtitle}{<subtitle>} % only for essays %
+\newcommand{\essayAbstract}{} % Only for essays -- leave empty for no abstract %
+
+% Center image and diagrams %
+\adjustboxset*{center}
+
+% Code settings %
+\setminted{
+    fontfamily=tt,
+    gobble=0,
+    frame=single,
+    funcnamehighlighting=true,
+    tabsize=4,
+    obeytabs=false,
+    mathescape=false
+    samepage=false,
+    showspaces=false,
+    showtabs =false,
+    texcl=false,
+    breaklines=true,
+}
+
+% inline code %
+\definecolor{codegray}{gray}{0.9}
+\newcommand{\code}[2]{\colorbox{codegray}{\mintinline{#1}{#2}}}
+
+% Code from tile %
+\newcommand{\codefile}{\inputminted}
+
+% Graphing stuff %
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{matrix}
+\usetikzlibrary{automata}
+
+% Define ceiling and floor functions %
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% Create set compliment command %
+\newcommand{\setcomp}[1]{{#1}^{\mathsf{c}}}
+
+% Create logic command aliases %
+\newcommand{\limplies}{\rightarrow}
+\newcommand{\nequiv}{\not\equiv}
+\newcommand{\liff}{\leftrightarrow}
+
+% first page header & footer %
+\fancypagestyle{assignment}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \renewcommand{\headrulewidth}{0mm}
+}
+
+% Frontmatter for essay page numbering%
+\fancypagestyle{frontmatter}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{EndFrontMatter}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Essay body page numbering %
+\fancypagestyle{body}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0.1mm}
+    \fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+    \fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+    \fancyfoot[L]{\courseCode\text{ }\semester}
+    \fancyhead[L]{\name}
+    \fancyhead[R]{\studentNumber}
+}
+
+% Page header and footers %
+\fancyhf{}
+\renewcommand{\footrulewidth}{0.1mm}
+\fancyfoot[R]{\assignmentType\text{ }\assignmentNumber}
+\fancyfoot[C]{\thepage \hspace{1pt} of \pageref{LastPage}}
+\fancyfoot[L]{\courseCode\text{ }\semester}
+\fancyhead[L]{\name}
+\fancyhead[R]{\studentNumber}
+
+% Apply headers & footer page style %
+\pagestyle{fancy}
+
+% Assignment first page header %
+\newcommand{\beginassignemnt}{
+    % Prevent paragraph indents, this isn't an English assignment! %
+    \newlength\tindent
+    \setlength{\tindent}{\parindent}
+    \setlength{\parindent}{0pt}
+
+    \thispagestyle{assignment}
+    \noindent
+    \courseTitle \hfill \university\\
+    \courseCode \hfill \semester
+    \begin{center}
+        \textbf{\assignmentType\text{ }\ifdefempty{\assignmentNumber}{}{\#}\assignmentNumber}\\
+        \name \hspace{1pt} - \studentNumber\\
+        \dueDate\\
+    \end{center}
+    \vspace{6pt}
+    \hrule
+    \vspace{1.5\headsep}
+}
+
+% Essay titlepage stuff %
+\newcommand{\beginessay}{
+    % Load all citations %
+    \nocite{*}
+
+    % Special numbering for front matter %
+    \pagestyle{frontmatter}
+    \pagenumbering{roman}
+
+    % Titlepage stuff %
+    \begin{center}
+        \normalsize
+        \textsc{\university}\\[5cm]
+        \LARGE \textbf{\MakeUppercase{\essayTitle}}\\[0.5cm]
+        \large \text{ }\essaySubtitle\text{ }\\[10cm] % blank \texts are used for empty subtitles %
+        \normalsize
+        \textsc{\name}\\
+        \textsc{\studentNumber}\\
+        \textsc{\courseCode}\\
+        \textsc{\semester}\\
+        \textsc{\dueDate}
+    \end{center}
+    \thispagestyle{empty}
+    % End title page stuff %
+
+    % Table of Contents %
+    \newpage
+    \tableofcontents
+    \newpage
+
+    % If more than 1 table/figure show appropriate lists %
+    \iftotalfigures
+        \addcontentsline{toc}{section}{\listfigurename}
+        \listoffigures
+    \fi
+    \iftotaltables
+        \addcontentsline{toc}{section}{\listtablename}
+        \listoftables
+    \fi
+
+    % Display an abstract if the abstract isn't empty %
+    \ifdefempty{\essayAbstract}{}{
+        \newpage
+        \addcontentsline{toc}{section}{Abstract}
+        \begin{abstract}
+            \essayAbstract
+        \end{abstract}
+
+    }
+    \label{EndFrontMatter}
+    \newpage
+
+    % Reset page numbering %
+    \pagenumbering{arabic}
+    \pagestyle{body}
+}
+
+% Update the bibliography command to add its self to the references
+\let\oldprintbib\printbibliography
+\renewcommand{\printbibliography}{
+    \newpage
+    \oldprintbib
+    \addcontentsline{toc}{section}{References}
+    \newpage
+}
+
+% Begin the document %
+\begin{document}
+
+% makes the header for assignment/titlepage for essay %
+% \beginessay
+\beginassignemnt
+
+\section*{Question 1}
+
+List the various components of Arc Map:\\
+
+\begin{tabular}{rl}
+    \hline
+
+    Item & Label \\\hline
+
+    1. & Arc Map Window\\
+    2. & Menubar\\
+    3. & Toolbar\\
+    4. & Table of Contents pane\\
+    5. & Table of Contents toolbar\\
+    6. & Layers pane\\
+    7. & The individual layers\\
+    8. & Map tools\\
+    9. & Map pane\\
+    10. & Toolbox pane\\
+    11. & The individual tools\\
+    12. & Catalog pane\\
+    13. & The Ottawa geo database\\
+    14. & The data for the Ottawa database\\
+    15. & The individual components making up the Ottawa database\\
+    16. & An Esri shape file which can be used to store geographic information\\
+    17. & The scale information\\\hline
+
+\end{tabular}
+
+
+\section*{Question 2}
+
+Using the formula $d=lat \cdot (\frac{\pi}{180})$ it is possible to solve for the distances:\\
+
+\begin{tabular}{rl}
+    \hline
+    Latitude & Distance (km)\\\hline
+
+    10 & 109.3\\
+    45 & 78.5\\
+    54 & 65.2\\
+    60 & 55.5\\
+    89 & 1.9\\\hline
+\end{tabular}\\
+
+As the latitude increases the distance at 1 degree decreases.
+
+\section*{Question 3}
+
+\begin{tabular}{llll}
+    \hline
+    Latitude & Longitude & Latitude dd & longitude dd\\\hline
+    45\textdegree00'38'' N  &  75\textdegree43'12'' W  & +45.0106 N & -75.7200 W\\
+    45\textdegree11'12'' N  &  75\textdegree50'46'' W  & +45.1867 N & -75.8486 W\\
+    45\textdegree14'15'' N  &  75\textdegree28'02'' W  & +45.2375 N & -75.4672 W\\
+    45\textdegree15'27'' N  &  76\textdegree03'52'' W  & +45.2575 N & -75.0644 W\\
+    45\textdegree17'37'' N  &  75\textdegree52'22'' W  & +45.2936 N & -75.8727 W\\
+    45\textdegree19'30'' N  &  75\textdegree36'06'' W  & +45.3250 N & -75.6016 W\\
+    45\textdegree19'42'' N  &  75\textdegree53'60'' W  & +45.3283 N & -75.9000 W\\
+    45\textdegree20'31'' N  &  76\textdegree01'50'' W  & +45.3419 N & -75.0305 W\\
+    45\textdegree20'32'' N  &  75\textdegree43'25'' W  & +45.3422 N & -75.7236 W\\
+    45\textdegree21'01'' N  &  75\textdegree45'53'' W  & +45.3503 N & -75.7647 W\\
+    45\textdegree21'01'' N  &  75\textdegree21'10'' W  & +45.3503 N & -75.3527 W\\
+    45\textdegree21'48'' N  &  75\textdegree47'23'' W  & +45.3633 N & -75.7897 W\\
+    45\textdegree22'14'' N  &  75\textdegree41'25'' W  & +45.3705 N & -75.6902 W\\
+    45\textdegree22'25'' N  &  75\textdegree57'20'' W  & +45.3736 N & -75.9555 W\\
+    45\textdegree23'00'' N  &  76\textdegree11'39'' W  & +45.3833 N & -75.1941 W\\
+    45\textdegree22'56'' N  &  75\textdegree44'28'' W  & +45.3988 N & -75.7411 W\\
+    45\textdegree22'56'' N  &  75\textdegree39'41'' W  & +45.3988 N & -75.6613 W\\
+    45\textdegree28'01'' N  &  75\textdegree29'26'' W  & +45.4669 N & -75.4905 W\\
+    45\textdegree28'19'' N  &  75\textdegree32'58'' W  & +45.4719 N & -75.5494 W\\
+    45\textdegree29'56'' N  &  76\textdegree05'13'' W  & +45.4989 N & -75.0869 W\\\hline
+
+\end{tabular}
+
+\section*{Question 4}
+
+Using the base scale uncertainty formula $\delta = \frac{0.25mm \cdot \text{scale denom}}{1000}$\\
+
+\begin{tabular}{rl}
+    \hline
+    Scale & Uncertainty (m)\\
+    \hline
+    1:1000 & 0.25\\
+    1:25000 & 6.25\\
+    1:63360 & 15.84\\
+    1:250000 & 62.5\\
+    1:5000000 & 1250\\\hline
+\end{tabular}
+
+\section*{Question 5}
+
+By analyzing the results in question four it is possible to conclude that as the scale increases so does the uncertainty. This is likely due to the digitization process for a larger scale can cause more inaccuracies since it is quite difficult to perfectly map out 100\% accurately.
+
+\section*{Question 6}
+
+Using the base location uncertainty formula for digitized layers based off of the notes $\delta = \sqrt{\text{base error}^2 + \text{digital error}^2} / 1000$\\
+
+\begin{tabular}{rl}
+    \hline
+    Scale & Uncertainty (m)\\
+    \hline
+    1:1000 & 0.35\\
+    1:25000 & 8.84\\
+    1:63360 & 22.40\\
+    1:250000 & 88.34\\
+    1:5000000 & 1767.77\\\hline
+\end{tabular}
+
+\section*{Question 7}
+
+Using the raster uncertainty formula based off of the notes\\ $\delta = \sqrt{\text{base error}^2 + \text{digital error}^2 + \text{raster error}^2} / 1000$\\
+
+\begin{tabular}{rl}
+    \hline
+    Scale & Uncertainty (m)\\
+    \hline
+    1:1000 & 0.42\\
+    1:25000 & 8.98\\
+    1:63360 & 22.73\\
+    1:250000 & 88.64\\
+    1:5000000 & 1767.90\\\hline
+\end{tabular}
+
+\section*{Question 8}
+
+As seen in ArcMap 10.5 when exporting the data you get:\\
+
+\adjincludegraphics[width=1\textwidth]{export.png}\\
+
+When exporting the data from ArcMap 10.5 the following columns are exported: L27 is the latitude in NAD27, LN 27 is the longitude in NAD27, L83 is the latitude in NAD83, and LN83 is the longitude in NAD83. The DST column is the distance between the two points in Meters. When sorting the data based on the distance it appears that the further apart the points are the further apart the longitudes and latitude values are in NAD27 and NAD83.
+
+\end{document}
