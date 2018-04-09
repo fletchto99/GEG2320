@@ -1,0 +1,1 @@
+SUMMARY = 'Accident' AND OCCDATE >= date '01/01/1999' AND OCCDATE < date'03/01/1999'
